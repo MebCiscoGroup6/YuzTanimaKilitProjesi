@@ -8,6 +8,7 @@ import numpy as np
 import glob
 import os
 from model.Veritabani_Kisi import VeriTabaniKisi
+from datetime import datetime
 
 class DoorCheck(QWidget):
     def __init__(self):
@@ -106,5 +107,13 @@ class DoorCheck(QWidget):
         self.vtk.Bagla()
         kisi = self.vtk.GetirOkulNo(okulNo)
         self.ui.lbDurum.setText(kisi.adSoyad + " Giriş Başarılı")
-        self.vtk.RaporEkle(kisi_id=kisi.kisiId)
+        tarih = str(datetime.now())
+        tarih = tarih[:tarih.find('.')]
+
+        self.vtk.RaporEkle(kisi_id=kisi.kisiId, tarih=tarih)
+        #resmi kaydedelim
+        tmp = tarih.replace("-","_").replace(" ","_").replace(":","_")
+        tmp = tmp + "_kisi_" + str(kisi.kisiId) + ".jpg"
+        kayit_yolu="resimler/raporlar/" + tmp
+        cv2.imwrite(kayit_yolu,self.sonGoruntu)
         self.vtk.Kes()
