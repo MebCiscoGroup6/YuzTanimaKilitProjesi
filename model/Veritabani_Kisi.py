@@ -1,6 +1,13 @@
 from model.Veritabani import Veritabani
 from collections import namedtuple
 import sqlite3
+from enum import Enum
+
+class RaporTuru(Enum):
+    TekTarih = 1
+    TarihAraligi = 2
+    KisiyeGore = 3
+
 class VeriTabaniKisi(Veritabani):
     def __init__(self):
         self.KisiListesi = []
@@ -103,3 +110,33 @@ class VeriTabaniKisi(Veritabani):
         except self.conn.Error as error:
             print("Bağlantı sorunu:{}".format(error))
             return None
+
+    def KisiRaporlari(self, raporTuru,**kwargs):
+        try:
+            cursor = self.conn.cursor()
+            sorgu = self.KisiRaporlariSorgu(raporTuru=raporTuru,**kwargs)
+            cursor.execute(sorgu)
+            raporListesi = cursor.fetchall()
+            #bu alana rapor sonucları gelecek
+
+
+            pass
+        except self.conn.Error as error:
+            print("Bağlantı sorunu:{}".format(error))
+            return None
+
+    def KisiRaporlariSorgu(self, raporTuru, **kwargs):
+        sorgu = ""
+        if raporTuru == RaporTuru.TekTarih:
+            _,tarih= list(kwargs.items())[0]
+            sorgu = "SELECT * from tbraporlar Where substr(tarih,1,10) = '{}'".\
+                format(tarih)
+        elif raporTuru == RaporTuru.TarihAraligi:
+            _,tarih1= list(kwargs.items())[0]
+            _,tarih2 = list(kwargs.items())[0]
+            sorgu = "SELECT * from tbraporlar Where substr(tarih,1,10) BETWEEN '{}' AND '{}'".\
+                format(tarih1, tarih2)
+        elif raporTuru == RaporTuru.KisiyeGore:
+            _,kisi_id= list(kwargs.items())[0]
+            sorgu = "SELECT * from tbraporlar Where kisi_id={}".format(kisi_id)
+        return sorgu
