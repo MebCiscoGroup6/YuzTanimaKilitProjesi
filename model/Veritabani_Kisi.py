@@ -1,7 +1,7 @@
 from model.Veritabani import Veritabani
 from collections import namedtuple
 import sqlite3
-
+from datetime import datetime
 class VeriTabaniKisi(Veritabani):
     def __init__(self):
         self.KisiListesi = []
@@ -89,6 +89,20 @@ class VeriTabaniKisi(Veritabani):
             cursor.close()
             print("Kayıtlar başarı ile getirildi.")
             return kisiListesi
+        except self.conn.Error as error:
+            print("Bağlantı sorunu:{}".format(error))
+            return None
+
+    def RaporEkle(self,kisi_id):
+        try:
+            tarih = str(datetime.now())
+            tarih = tarih[:tarih.find('.')]
+            cursor = self.conn.cursor()
+            sorgu = "Insert Into tbraporlar(kisi_id,tarih) Values('{}','{}')".\
+                format(kisi_id,tarih)
+            cursor.execute(sorgu)
+            self.conn.commit()
+            print("Kişi kaydedildi.")
         except self.conn.Error as error:
             print("Bağlantı sorunu:{}".format(error))
             return None

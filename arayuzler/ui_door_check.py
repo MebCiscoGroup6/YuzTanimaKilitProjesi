@@ -51,7 +51,7 @@ class Ui_DoorCheck(object):
         Form.setWindowTitle(_translate("Form", "Kişi Kontrol Kamera Taraması"))
         self.label.setText(_translate("Form", "Kapı Kontrol"))
         self.lbDurum.setText(_translate("Form", "Onay Durumu: Bekleniyor"))
-        self.btnTekrarDene.setText(_translate("Form", "Tekrar Dene"))
+        self.btnTekrarDene.setText(_translate("Form", "Başlat"))
 
 
 # if __name__ == "__main__":

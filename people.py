@@ -12,22 +12,20 @@ class People(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.people_table_page = PeopleTable()
         self.ui.btnKisiler.clicked.connect(self.clickKisilerAc)
-
         self.ui.btnKisiEkle.clicked.connect(self.clickKisiEkleAc)
-        self.people_add_page = PeopleAdd()
-
         self.ui.btnOgrenciKontrol.clicked.connect(self.clickKapiKontrol)
-        self.door_check_page = DoorCheck()
+
 
 
     def clickKisilerAc(self):
-
+        self.people_table_page = PeopleTable()
         self.people_table_page.show()
 
     def clickKisiEkleAc(self):
+        self.people_add_page = PeopleAdd()
         self.people_add_page.show()
 
     def clickKapiKontrol(self):
+        self.door_check_page = DoorCheck()
         self.door_check_page.show()

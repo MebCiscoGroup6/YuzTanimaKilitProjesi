@@ -102,8 +102,9 @@ class DoorCheck(QWidget):
         return kare
 
     def kisiGetir(self, okulNo):
-        # self.kameraDurdur()
+        self.kameraDurdur()
         self.vtk.Bagla()
         kisi = self.vtk.GetirOkulNo(okulNo)
         self.ui.lbDurum.setText(kisi.adSoyad + " Giriş Başarılı")
+        self.vtk.RaporEkle(kisi_id=kisi.kisiId)
         self.vtk.Kes()
