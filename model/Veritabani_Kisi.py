@@ -113,17 +113,19 @@ class VeriTabaniKisi(Veritabani):
         return raporListesi
 
     def KisiRaporlariSorgu(self, raporTuru, kwargs):
-        sorgu = ""
+        sorgu = "SELECT rp.*,ks.ad_soyad from tbraporlar rp Inner JOIN tbkisiler ks On rp.kisi_id=ks.kisi_id"
         if raporTuru == RaporTuru.TekTarih:
             _,tarih= list(kwargs.items())[0]
-            sorgu = "SELECT * from tbraporlar Where substr(tarih,1,10) = '{}'".\
+            sorgu = sorgu + " Where substr(rp.tarih,1,10) = '{}'".\
                 format(tarih)
         elif raporTuru == RaporTuru.TarihAraligi:
             _,tarih1= list(kwargs.items())[0]
             _,tarih2 = list(kwargs.items())[1]
-            sorgu = "SELECT * from tbraporlar Where substr(tarih,1,10) BETWEEN '{}' AND '{}'".\
+            sorgu = sorgu + " Where substr(rp.tarih,1,10) BETWEEN '{}' AND '{}'".\
                 format(tarih1, tarih2)
         elif raporTuru == RaporTuru.KisiyeGore:
             _,kisi_id= list(kwargs.items())[0]
-            sorgu = "SELECT * from tbraporlar Where kisi_id={}".format(kisi_id)
+            sorgu = sorgu + " Where rp.kisi_id={}".format(kisi_id)
+        else:
+            sorgu = ""
         return sorgu
