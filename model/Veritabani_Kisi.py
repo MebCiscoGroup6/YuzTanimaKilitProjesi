@@ -113,8 +113,9 @@ class VeriTabaniKisi(Veritabani):
 
     def KisiRaporlari(self, raporTuru,**kwargs):
         try:
+            #buradaki dict_items degerlerini yine kwargs degiskeni olarak yolladim
             cursor = self.conn.cursor()
-            sorgu = self.KisiRaporlariSorgu(raporTuru=raporTuru,**kwargs)
+            sorgu = self.KisiRaporlariSorgu(raporTuru=raporTuru, kwargs=kwargs)
             cursor.execute(sorgu)
             raporListesi = cursor.fetchall()
             #bu alana rapor sonucları gelecek
@@ -125,7 +126,7 @@ class VeriTabaniKisi(Veritabani):
             print("Bağlantı sorunu:{}".format(error))
             return None
 
-    def KisiRaporlariSorgu(self, raporTuru, **kwargs):
+    def KisiRaporlariSorgu(self, raporTuru, kwargs):
         sorgu = ""
         if raporTuru == RaporTuru.TekTarih:
             _,tarih= list(kwargs.items())[0]
