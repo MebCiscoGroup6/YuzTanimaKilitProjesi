@@ -41,4 +41,23 @@ class Report(QWidget):
         elif sorgulamaTuru == RaporTuru.KisiyeGore:
             kisiId = self.ui.cmbKisiAdi.currentData()
             self.raporListesi = self.vtk.KisiRaporlari(raporTuru=RaporTuru.KisiyeGore, kisi_id=kisiId)
+
+        self.tabloOlustur()
         print(self.raporListesi)
+
+
+    def tabloOlustur(self):
+
+        satirSayisi = len(self.raporListesi)
+        sutunSayisi = 3 #gosterilecek sutun sayisi
+        self.ui.tbwRaporlar.setRowCount(satirSayisi)
+        self.ui.tbwRaporlar.setColumnCount(sutunSayisi)
+        # #sutunlar
+        self.ui.tbwRaporlar.setHorizontalHeaderItem(0,QTableWidgetItem("Rapor Id"))
+        self.ui.tbwRaporlar.setHorizontalHeaderItem(1,QTableWidgetItem("Ad Soyad"))
+        self.ui.tbwRaporlar.setHorizontalHeaderItem(2,QTableWidgetItem("Tarih"))
+        # #satirlar
+        for satir, rapor in enumerate(self.raporListesi):
+            self.ui.tbwRaporlar.setItem(satir,0, QTableWidgetItem(str(rapor.raporId)))
+            self.ui.tbwRaporlar.setItem(satir,1, QTableWidgetItem(rapor.adSoyad))
+            self.ui.tbwRaporlar.setItem(satir,2, QTableWidgetItem(rapor.tarih))

@@ -13,6 +13,7 @@ class VeriTabaniKisi(Veritabani):
     def __init__(self):
         self.KisiListesi = []
         self.kTuple = namedtuple('Kisi', ['kisiId', 'adSoyad', 'okulNo', 'sinif', 'resim'])
+        self.rTuple = namedtuple('Rapor',['raporId','kisiId','tarih','adSoyad'])
         pass
 
     def HataYakala(fonk):
@@ -109,6 +110,7 @@ class VeriTabaniKisi(Veritabani):
         sorgu = self.KisiRaporlariSorgu(raporTuru=raporTuru, kwargs=kwargs)
         cursor.execute(sorgu)
         raporListesi = cursor.fetchall()
+        raporListesi = [self.rTuple(r[0], r[1], r[2], r[3]) for r in raporListesi]
         # bu alana rapor sonucları gelecek
         return raporListesi
 
