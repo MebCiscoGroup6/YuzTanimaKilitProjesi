@@ -43,6 +43,7 @@ class Report(QWidget):
             self.raporListesi = self.vtk.KisiRaporlari(raporTuru=RaporTuru.KisiyeGore, kisi_id=kisiId)
 
         self.tabloOlustur()
+        self.grafikOlustur()
         print(self.raporListesi)
 
     def tabloOlustur(self):
@@ -66,3 +67,11 @@ class Report(QWidget):
         tmp = tarih.split("-")
         tarih = tmp[2] + "-" + tmp[1] + "-" + tmp[0]
         return tarih
+
+    def grafikOlustur(self):
+        #Burada giriş yapan kişilerin giriş sayılarına göra bir raporlama yapılacak.
+        x = range(0, 10)
+        y = range(0, 20, 2)
+
+        self.ui.MplWidget.canvas.ax.plot(x, y)
+        self.ui.MplWidget.canvas.draw()
