@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import *
 from arayuzler.ui_report import Ui_Report
 from model.Veritabani_Kisi import VeriTabaniKisi, RaporTuru
-
+import numpy as np
+import pandas as pd
 
 class Report(QWidget):
     def __init__(self):
@@ -44,7 +45,6 @@ class Report(QWidget):
 
         self.tabloOlustur()
         self.grafikOlustur()
-        print(self.raporListesi)
 
     def tabloOlustur(self):
 
@@ -70,8 +70,12 @@ class Report(QWidget):
 
     def grafikOlustur(self):
         #Burada giriş yapan kişilerin giriş sayılarına göra bir raporlama yapılacak.
-        x = range(0, 10)
-        y = range(0, 20, 2)
+        veriKumesi = pd.DataFrame(self.raporListesi)
+        print(veriKumesi)
+        tablo = veriKumesi.groupby('adSoyad').count()
+
+        x = veriKumesi.adSoyad
+        y = veriKumesi.tarih
 
         self.ui.MplWidget.canvas.ax.plot(x, y)
         self.ui.MplWidget.canvas.draw()
