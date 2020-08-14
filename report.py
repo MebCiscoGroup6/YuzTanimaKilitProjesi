@@ -13,6 +13,7 @@ class Report(QWidget):
         self.kisileriGetir()
         self.sorguTurleriniGetir()
         self.ui.btnSorgula.clicked.connect(self.clickSorgulamaBaslat)
+        self.raporListesi = []
 
     def kisileriGetir(self):
         self.kisiListesi = self.vtk.TumunuGetir()
@@ -31,10 +32,13 @@ class Report(QWidget):
     def clickSorgulamaBaslat(self):
         sorgulamaTuru = self.ui.cmbSorguTuru.currentData()
         if sorgulamaTuru == RaporTuru.TekTarih:
-            print("Tek tarih")
+            tarih = self.ui.leTarih1.text()
+            self.raporListesi = self.vtk.KisiRaporlari(raporTuru=RaporTuru.TekTarih, tarih=tarih)
         elif sorgulamaTuru == RaporTuru.TarihAraligi:
-            print("Tarih Aralığı")
+            tarih1 = self.ui.leTarih1.text()
+            tarih2 = self.ui.leTarih2.text()
+            self.raporListesi = self.vtk.KisiRaporlari(raporTuru=RaporTuru.TarihAraligi, tarih1=tarih1, tarih2=tarih2)
         elif sorgulamaTuru == RaporTuru.KisiyeGore:
             kisiId = self.ui.cmbKisiAdi.currentData()
-            print("Kişiye göre", kisiId)
-
+            self.raporListesi = self.vtk.KisiRaporlari(raporTuru=RaporTuru.KisiyeGore, kisi_id=kisiId)
+        print(self.raporListesi)
