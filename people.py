@@ -23,10 +23,13 @@ class People(QMainWindow):
     def clickKisilerAc(self):
         self.people_table_page = PeopleTable()
         self.people_table_page.show()
+        #Kayıtlı kişileri açan fonksiyon
+
 
     def clickKisiEkleAc(self):
         self.people_add_page = PeopleAdd()
         self.people_add_page.show()
+        #Kişi ekleme formunu açan fonksiyon.
 
     def clickKapiKontrol(self):
         self.door_check_page = DoorCheck()
