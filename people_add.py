@@ -8,6 +8,7 @@ import cv2
 
 
 class PeopleAdd(QWidget):
+    #people add sınıfı tanımlanmaktadır.
     def __init__(self):
         super(PeopleAdd, self).__init__()
         self.ui = Ui_PeopleAdd()
@@ -24,6 +25,7 @@ class PeopleAdd(QWidget):
         self.vtk = VeriTabaniKisi()
 
     def clickKisiKaydet(self):
+         #Veri tabanına kişinin bilgilerini kaydeden fonsiyon
         self.vtk.Bagla()
         okulNo = self.ui.lbOkulNo.text()
         resimAdi = self.ui.lbOkulNo.text() + ".jpg"
@@ -34,6 +36,7 @@ class PeopleAdd(QWidget):
         print("Kişi kaydedildi.")
         self.vtk.Kes()
         self.close()
+      .
 
     def clickResimKaydet(self):
         resimAdi = self.ui.lbOkulNo.text() + ".jpg"
@@ -61,6 +64,7 @@ class PeopleAdd(QWidget):
         self.ui.lbResim.setPixmap(QPixmap.fromImage(qImg))
 
     def clickKameraAc(self):
+        #kamera açma fonksiyonu tanımlanmaktadır.
         if not self.timer.isActive():
             self.kamera = cv2.VideoCapture(0)
             self.ui.btnDegistir.setText("Durdur")
