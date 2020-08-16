@@ -36,7 +36,7 @@ class PeopleAdd(QWidget):
         print("Kişi kaydedildi.")
         self.vtk.Kes()
         self.close()
-      .
+
 
     def clickResimKaydet(self):
         resimAdi = self.ui.lbOkulNo.text() + ".jpg"

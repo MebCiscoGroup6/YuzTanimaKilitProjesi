@@ -69,13 +69,16 @@ class Report(QWidget):
         return tarih
 
     def grafikOlustur(self):
+        self.ui.MplWidget.canvas.ax.clear()
+        self.ui.MplWidget.canvas.draw()
+
         #Burada giriş yapan kişilerin giriş sayılarına göra bir raporlama yapılacak.
         veriKumesi = pd.DataFrame(self.raporListesi)
-        print(veriKumesi)
-        tablo = veriKumesi.groupby('adSoyad').count()
-
-        x = veriKumesi.adSoyad
-        y = veriKumesi.tarih
+        # print(veriKumesi)
+        veriler = ['adSoyad', 'tarih']
+        tablo = veriKumesi[veriler].groupby(['adSoyad']).size().reset_index(name="sayi")
+        x = tablo.adSoyad
+        y = tablo.sayi
 
         self.ui.MplWidget.canvas.ax.plot(x, y)
         self.ui.MplWidget.canvas.draw()
