@@ -17,10 +17,15 @@ class DoorCheck(QWidget):
         self.ui.setupUi(self)
         self.timer = QTimer()
         self.klasorBilgileri() #klasörlerdeki bilgileri alıyoruz.
-        self.timer.timeout.connect(self.kameraGoster)
+        #kameraOynat ve kontrolBaslat timerdan once olmali
+        self.kameraOynat()
+        self.kontrolBaslat = False
+        self.timer.timeout.connect(self.goruntuGoster)
         self.Uzaklik = 0.6  # tanima orani
         self.ui.btnTekrarDene.clicked.connect(self.clickKameraAc)
         self.vtk = VeriTabaniKisi()
+
+
         pass
 
     def klasorBilgileri(self):
@@ -37,23 +42,29 @@ class DoorCheck(QWidget):
         self.yuzler = list(sozluk.values())
         self.adlar = list(sozluk.keys())
 
-    def kameraGoster(self):
+    def goruntuGoster(self):
         ret, kare = self.kamera.read()
         kare = cv2.cvtColor(kare, cv2.COLOR_BGR2RGB)
         height, width, channel = kare.shape
         step = channel * width
         self.sonGoruntu = kare  # resmin ekrandaki son  temiz hali
-        kontrolluResim = self.kontrolluResimGoster(kare)
+        kontrolluResim = kare
+        if self.kontrolBaslat == True:
+            kontrolluResim = self.kontrolluResimGoster(kare)
+
         qImg = QImage(kontrolluResim.data, width, height, step, QImage.Format_RGB888)
         self.ui.lbKamera.setPixmap(QPixmap.fromImage(qImg))
 
-    def clickKameraAc(self):
+    def kameraOynat(self):
         if not self.timer.isActive():
             self.kamera = cv2.VideoCapture(0)
-            self.ui.btnTekrarDene.setText("Durdur")
+            self.ui.btnTekrarDene.setText("Kontrol Et")
             self.timer.start(20)
         else:
             self.kameraDurdur()
+
+    def clickKameraAc(self):
+        self.kontrolBaslat = not self.kontrolBaslat
 
     def kameraDurdur(self):
         self.ui.btnTekrarDene.setText("Tekrar Dene")
