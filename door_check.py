@@ -9,6 +9,7 @@ import glob
 import os
 from model.Veritabani_Kisi import VeriTabaniKisi
 from datetime import datetime
+from threading import Thread
 
 class DoorCheck(QWidget):
     def __init__(self):
@@ -32,15 +33,30 @@ class DoorCheck(QWidget):
         sozluk = {}
         Resimler = "resimler/kisiler"
         print(glob.glob((os.path.join(Resimler, '*.jpg'))))
-        for dosyaad in glob.glob((os.path.join(Resimler, '*.jpg'))):
+        # fotolar = [x for x in os.listdir(Resimler) if os.path.isdir(x)]
+        thread1 = Thread(target=self.threadFaceSozluk, args=(Resimler,sozluk))
+        thread1.start()
+
+    def threadFaceSozluk(self, Resimler, sozluk):
+        tumResimler = glob.glob((os.path.join(Resimler, '*.jpg')))
+        tumResimSayisi = len(tumResimler)
+        r = 0
+        for dosyaad in tumResimler:
             image_rgb = face_recognition.load_image_file(dosyaad)
             kimlik = os.path.splitext(os.path.basename(dosyaad))
+            r +=1
+            self.ui.btnTekrarDene.setEnabled(False)
+            self.setWindowTitle("Yüklenen resim {}/{} - Resim:{}".format(r,tumResimSayisi, dosyaad))
+            #burada tanimlamalarin sisteme yuklenmesi icin thread yapmaliyiz.
+
             konumlar = face_recognition.face_locations(image_rgb)
             kodlamalar = face_recognition.face_encodings(image_rgb, konumlar)
             sozluk[kimlik] = kodlamalar[0]
 
+        self.ui.btnTekrarDene.setEnabled(True)
         self.yuzler = list(sozluk.values())
         self.adlar = list(sozluk.keys())
+
 
     def goruntuGoster(self):
         ret, kare = self.kamera.read()
@@ -65,6 +81,8 @@ class DoorCheck(QWidget):
 
     def clickKameraAc(self):
         self.kontrolBaslat = not self.kontrolBaslat
+        if self.kontrolBaslat == False:
+            self.kameraOynat()
 
     def kameraDurdur(self):
         self.ui.btnTekrarDene.setText("Tekrar Dene")
@@ -83,6 +101,7 @@ class DoorCheck(QWidget):
                 en_uygun = np.argmin(mesafeler)
                 ad = self.adlar[en_uygun]
                 #öğrenci tanındı.
+                print("Taninan ogrenci", ad[0])
                 okulNo = int(ad[0])
                 self.kisiGetir(okulNo=okulNo)
             else:
