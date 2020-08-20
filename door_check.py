@@ -11,21 +11,21 @@ from model.Veritabani_Kisi import VeriTabaniKisi
 from datetime import datetime
 from threading import Thread
 
+
 class DoorCheck(QWidget):
     def __init__(self):
-        super(DoorCheck,self).__init__()
+        super(DoorCheck, self).__init__()
         self.ui = Ui_DoorCheck()
         self.ui.setupUi(self)
         self.timer = QTimer()
-        self.klasorBilgileri() #klasörlerdeki bilgileri alıyoruz.
-        #kameraOynat ve kontrolBaslat timerdan once olmali
+        self.klasorBilgileri()  # klasörlerdeki bilgileri alıyoruz.
+        # kameraOynat ve kontrolBaslat timerdan once olmali
         self.kameraOynat()
         self.kontrolBaslat = False
         self.timer.timeout.connect(self.goruntuGoster)
         self.Uzaklik = 0.6  # tanima orani
         self.ui.btnTekrarDene.clicked.connect(self.clickKameraAc)
         self.vtk = VeriTabaniKisi()
-
 
         pass
 
@@ -34,20 +34,29 @@ class DoorCheck(QWidget):
         Resimler = "resimler/kisiler"
         print(glob.glob((os.path.join(Resimler, '*.jpg'))))
         # fotolar = [x for x in os.listdir(Resimler) if os.path.isdir(x)]
-        thread1 = Thread(target=self.threadFaceSozluk, args=(Resimler,sozluk))
+        thread1 = Thread(target=self.threadFaceSozluk, args=(Resimler, sozluk))
         thread1.start()
 
-    def threadFaceSozluk(self, Resimler, sozluk):
+    def sozlukOku(self):
+        data = np.loadtxt("takas/yuzler.csv", delimiter=',')
+        self.yuzler = [np.array(x) for x in data]
+
+        data = np.loadtxt("takas/adlar.csv", delimiter=',', dtype=object)
+        self.adlar = [tuple(x) for x in data]
+
+
+
+    def sozlukYaz(self, Resimler, sozluk):
         tumResimler = glob.glob((os.path.join(Resimler, '*.jpg')))
         tumResimSayisi = len(tumResimler)
         r = 0
         for dosyaad in tumResimler:
             image_rgb = face_recognition.load_image_file(dosyaad)
             kimlik = os.path.splitext(os.path.basename(dosyaad))
-            r +=1
+            r += 1
             self.ui.btnTekrarDene.setEnabled(False)
-            self.setWindowTitle("Yüklenen resim {}/{} - Resim:{}".format(r,tumResimSayisi, dosyaad))
-            #burada tanimlamalarin sisteme yuklenmesi icin thread yapmaliyiz.
+            self.setWindowTitle("Yüklenen resim {}/{} - Resim:{}".format(r, tumResimSayisi, dosyaad))
+            # burada tanimlamalarin sisteme yuklenmesi icin thread yapmaliyiz.
 
             konumlar = face_recognition.face_locations(image_rgb)
             kodlamalar = face_recognition.face_encodings(image_rgb, konumlar)
@@ -57,6 +66,16 @@ class DoorCheck(QWidget):
         self.yuzler = list(sozluk.values())
         self.adlar = list(sozluk.keys())
 
+        data = np.asarray(self.yuzler)
+        np.savetxt("takas/yuzler.csv", data, delimiter=',')
+
+        data = np.asarray(self.adlar, dtype=object)
+        np.savetxt("takas/adlar.csv", data, delimiter=',', fmt='%s')
+
+
+    def threadFaceSozluk(self, Resimler, sozluk):
+        self.sozlukOku()
+        # self.sozlukYaz(Resimler,sozluk)
 
     def goruntuGoster(self):
         ret, kare = self.kamera.read()
@@ -83,6 +102,7 @@ class DoorCheck(QWidget):
         self.kontrolBaslat = not self.kontrolBaslat
         if self.kontrolBaslat == False:
             self.kameraOynat()
+            self.ui.lbDurum.setText("Onay Durumu: Bekleniyor")
 
     def kameraDurdur(self):
         self.ui.btnTekrarDene.setText("Tekrar Dene")
@@ -100,12 +120,12 @@ class DoorCheck(QWidget):
             if np.any(mesafeler <= self.Uzaklik):
                 en_uygun = np.argmin(mesafeler)
                 ad = self.adlar[en_uygun]
-                #öğrenci tanındı.
+                # öğrenci tanındı.
                 print("Taninan ogrenci", ad[0])
                 okulNo = int(ad[0])
                 self.kisiGetir(okulNo=okulNo)
             else:
-                #ogrenci tanınmadı
+                # ogrenci tanınmadı
                 ad = None
                 self.ui.lbDurum.setText("Durum: Kişi Tanınmadı")
             tepe, sag, alt, sol = konum
@@ -141,9 +161,9 @@ class DoorCheck(QWidget):
         tarih = tarih[:tarih.find('.')]
 
         self.vtk.RaporEkle(kisi_id=kisi.kisiId, tarih=tarih)
-        #resmi kaydedelim
-        tmp = tarih.replace("-","_").replace(" ","_").replace(":","_")
+        # resmi kaydedelim
+        tmp = tarih.replace("-", "_").replace(" ", "_").replace(":", "_")
         tmp = tmp + "_kisi_" + str(kisi.kisiId) + ".jpg"
-        kayit_yolu="resimler/raporlar/" + tmp
-        cv2.imwrite(kayit_yolu,self.sonGoruntu)
+        kayit_yolu = "resimler/raporlar/" + tmp
+        cv2.imwrite(kayit_yolu, self.sonGoruntu)
         self.vtk.Kes()
