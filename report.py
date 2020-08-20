@@ -10,7 +10,6 @@ class Report(QWidget):
         self.ui = Ui_Report()
         self.ui.setupUi(self)
         self.vtk = VeriTabaniKisi()
-        self.vtk.Bagla()
         self.kisileriGetir()
         self.sorguTurleriniGetir()
         self.ui.btnSorgula.clicked.connect(self.clickSorgulamaBaslat)

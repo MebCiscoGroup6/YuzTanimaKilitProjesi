@@ -26,7 +26,6 @@ class PeopleAdd(QWidget):
 
     def clickKisiKaydet(self):
          #Veri tabanına kişinin bilgilerini kaydeden fonsiyon
-        self.vtk.Bagla()
         okulNo = self.ui.lbOkulNo.text()
         resimAdi = self.ui.lbOkulNo.text() + ".jpg"
         adSoyad = self.ui.lbAdSoyad.text()
@@ -34,7 +33,6 @@ class PeopleAdd(QWidget):
         kisi = Kisi(kisiId=None, okulNo=int(okulNo), adSoyad=adSoyad, sinif=sinif, resim=resimAdi)
         self.vtk.Ekle(kisi)
         print("Kişi kaydedildi.")
-        self.vtk.Kes()
         self.close()
 
 

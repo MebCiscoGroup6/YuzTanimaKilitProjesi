@@ -8,10 +8,7 @@ class PeopleTable(QWidget):
         self.ui = Ui_PeopleTable()
         self.ui.setupUi(self)
         self.vtk = VeriTabaniKisi()
-
-        self.vtk.Bagla()
         self.verileriGetir()
-        # self.vtk.Kes()
 
         self.ui.tbwKisiler.clicked.connect(self.selectedTwbKisiler)
 

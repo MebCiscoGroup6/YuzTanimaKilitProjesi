@@ -21,7 +21,8 @@ class VeriTabaniKisi(Veritabani):
         def wrapper(self, *args, **kwargs):
             sonuc = None
             try:
-                sonuc = fonk(self, *args, **kwargs)
+                with sqlite3.connect('db/db_python_kisiler.db') as self.conn:
+                    sonuc = fonk(self, *args, **kwargs)
             except self.conn.Error as error:
                 print("Bağlantı sorunu:{}".format(error))
             return sonuc
@@ -42,7 +43,10 @@ class VeriTabaniKisi(Veritabani):
         cursor.execute(sorgu)
         self.conn.commit()
         cursor.close()
+
+        self.DegisiklikYapildi(degisiklikTuru=True)
         print("Kayıt başarı ile gerçekleştirildi.")
+
 
     @HataYakala
     def Sil(self, id):
@@ -102,6 +106,7 @@ class VeriTabaniKisi(Veritabani):
         cursor.execute(sorgu)
         self.conn.commit()
         print("Kişi kaydedildi.")
+        cursor.close()
 
     @HataYakala
     def KisiRaporlari(self, raporTuru,**kwargs):
@@ -131,3 +136,21 @@ class VeriTabaniKisi(Veritabani):
         else:
             sorgu = ""
         return sorgu
+
+    @HataYakala
+    def DegisiklikDurum(self):
+        cursor = self.conn.cursor()
+        sorgu = "Select * from tbGuncelleme Limit 1"
+        cursor.execute(sorgu)
+        durum = cursor.fetchone()
+        durum = durum[0] == "True" #donen deger(False,) tuple şeklindeydi
+        return durum
+
+    @HataYakala
+    def DegisiklikYapildi(self, degisiklikTuru=False):
+        cursor = self.conn.cursor()
+        sorgu = "Update tbGuncelleme Set durum='{}'".format(degisiklikTuru)
+        cursor.execute(sorgu)
+        self.conn.commit()
+        cursor.close()
+

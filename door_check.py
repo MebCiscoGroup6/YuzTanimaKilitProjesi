@@ -18,6 +18,9 @@ class DoorCheck(QWidget):
         self.ui = Ui_DoorCheck()
         self.ui.setupUi(self)
         self.timer = QTimer()
+
+        self.vtk = VeriTabaniKisi()
+
         self.klasorBilgileri()  # klasörlerdeki bilgileri alıyoruz.
         # kameraOynat ve kontrolBaslat timerdan once olmali
         self.kameraOynat()
@@ -25,9 +28,11 @@ class DoorCheck(QWidget):
         self.timer.timeout.connect(self.goruntuGoster)
         self.Uzaklik = 0.6  # tanima orani
         self.ui.btnTekrarDene.clicked.connect(self.clickKameraAc)
-        self.vtk = VeriTabaniKisi()
 
         pass
+
+    def closeEvent(self, event):
+        self.kameraDurdur()
 
     def klasorBilgileri(self):
         sozluk = {}
@@ -43,8 +48,6 @@ class DoorCheck(QWidget):
 
         data = np.loadtxt("takas/adlar.csv", delimiter=',', dtype=object)
         self.adlar = [tuple(x) for x in data]
-
-
 
     def sozlukYaz(self, Resimler, sozluk):
         tumResimler = glob.glob((os.path.join(Resimler, '*.jpg')))
@@ -71,11 +74,14 @@ class DoorCheck(QWidget):
 
         data = np.asarray(self.adlar, dtype=object)
         np.savetxt("takas/adlar.csv", data, delimiter=',', fmt='%s')
-
+        #veritabanından degil dosyadan bakacak.
+        self.vtk.DegisiklikYapildi(degisiklikTuru=False)
 
     def threadFaceSozluk(self, Resimler, sozluk):
-        self.sozlukOku()
-        # self.sozlukYaz(Resimler,sozluk)
+        if self.vtk.DegisiklikDurum() == True:
+            self.sozlukYaz(Resimler, sozluk)
+        else:
+            self.sozlukOku()
 
     def goruntuGoster(self):
         ret, kare = self.kamera.read()
@@ -154,7 +160,6 @@ class DoorCheck(QWidget):
 
     def kisiGetir(self, okulNo):
         self.kameraDurdur()
-        self.vtk.Bagla()
         kisi = self.vtk.GetirOkulNo(okulNo)
         self.ui.lbDurum.setText(kisi.adSoyad + " Giriş Başarılı")
         tarih = str(datetime.now())
@@ -166,4 +171,4 @@ class DoorCheck(QWidget):
         tmp = tmp + "_kisi_" + str(kisi.kisiId) + ".jpg"
         kayit_yolu = "resimler/raporlar/" + tmp
         cv2.imwrite(kayit_yolu, self.sonGoruntu)
-        self.vtk.Kes()
+
