@@ -4,6 +4,7 @@ from people_table import PeopleTable
 from people_add import PeopleAdd
 from door_check import DoorCheck
 from report import Report
+from model.YuzTanima import YuzTanima
 
 # from PyQt5.QtCore import pyqtSignal
 
@@ -18,7 +19,7 @@ class People(QMainWindow):
         self.ui.btnKisiEkle.clicked.connect(self.clickKisiEkleAc)
         self.ui.btnOgrenciKontrol.clicked.connect(self.clickKapiKontrol)
         self.ui.btnRaporlar.clicked.connect(self.clickKisiRaporlar)
-
+        self.ui.btnOnYukleme.clicked.connect(self.clickOnyukleyiciGuncelle)
 
     def clickKisilerAc(self):
         self.people_table_page = PeopleTable()
@@ -38,3 +39,10 @@ class People(QMainWindow):
     def clickKisiRaporlar(self):
         self.report_page = Report()
         self.report_page.show()
+
+    def clickOnyukleyiciGuncelle(self):
+        self.ui.btnOnYukleme.setEnabled(False)
+        yuzTanima = YuzTanima()
+        yuzTanima.SozlukCsvTumunuYenile(self)
+
+

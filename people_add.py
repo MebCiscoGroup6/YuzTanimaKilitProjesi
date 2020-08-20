@@ -4,6 +4,7 @@ from PyQt5.QtCore import QTimer
 from arayuzler.ui_people_add import Ui_PeopleAdd
 from model.Kisi import Kisi
 from model.Veritabani_Kisi import VeriTabaniKisi
+from model.YuzTanima import YuzTanima
 import cv2
 
 
@@ -32,6 +33,8 @@ class PeopleAdd(QWidget):
         sinif = self.ui.lbSinif.text()
         kisi = Kisi(kisiId=None, okulNo=int(okulNo), adSoyad=adSoyad, sinif=sinif, resim=resimAdi)
         self.vtk.Ekle(kisi)
+        yuzTanima = YuzTanima()
+        yuzTanima.SozlukEkle(resimAdi)
         print("Kişi kaydedildi.")
         self.close()
 

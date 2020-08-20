@@ -78,10 +78,12 @@ class DoorCheck(QWidget):
         self.vtk.DegisiklikYapildi(degisiklikTuru=False)
 
     def threadFaceSozluk(self, Resimler, sozluk):
-        if self.vtk.DegisiklikDurum() == True:
-            self.sozlukYaz(Resimler, sozluk)
-        else:
-            self.sozlukOku()
+
+        self.sozlukOku()
+        # if self.vtk.DegisiklikDurum() == True:
+        #     self.sozlukYaz(Resimler, sozluk)
+        # else:
+        #     self.sozlukOku()
 
     def goruntuGoster(self):
         ret, kare = self.kamera.read()
