@@ -10,7 +10,7 @@ import os
 from model.Veritabani_Kisi import VeriTabaniKisi
 from datetime import datetime
 from threading import Thread
-
+from model.YuzTanima import YuzTanima
 
 class DoorCheck(QWidget):
     def __init__(self):
@@ -20,7 +20,7 @@ class DoorCheck(QWidget):
         self.timer = QTimer()
 
         self.vtk = VeriTabaniKisi()
-
+        self.yuzTanima = YuzTanima()
         self.klasorBilgileri()  # klasörlerdeki bilgileri alıyoruz.
         # kameraOynat ve kontrolBaslat timerdan once olmali
         self.kameraOynat()
@@ -49,41 +49,10 @@ class DoorCheck(QWidget):
         data = np.loadtxt("takas/adlar.csv", delimiter=',', dtype=object)
         self.adlar = [tuple(x) for x in data]
 
-    def sozlukYaz(self, Resimler, sozluk):
-        tumResimler = glob.glob((os.path.join(Resimler, '*.jpg')))
-        tumResimSayisi = len(tumResimler)
-        r = 0
-        for dosyaad in tumResimler:
-            image_rgb = face_recognition.load_image_file(dosyaad)
-            kimlik = os.path.splitext(os.path.basename(dosyaad))
-            r += 1
-            self.ui.btnTekrarDene.setEnabled(False)
-            self.setWindowTitle("Yüklenen resim {}/{} - Resim:{}".format(r, tumResimSayisi, dosyaad))
-            # burada tanimlamalarin sisteme yuklenmesi icin thread yapmaliyiz.
-
-            konumlar = face_recognition.face_locations(image_rgb)
-            kodlamalar = face_recognition.face_encodings(image_rgb, konumlar)
-            sozluk[kimlik] = kodlamalar[0]
-
-        self.ui.btnTekrarDene.setEnabled(True)
-        self.yuzler = list(sozluk.values())
-        self.adlar = list(sozluk.keys())
-
-        data = np.asarray(self.yuzler)
-        np.savetxt("takas/yuzler.csv", data, delimiter=',')
-
-        data = np.asarray(self.adlar, dtype=object)
-        np.savetxt("takas/adlar.csv", data, delimiter=',', fmt='%s')
-        #veritabanından degil dosyadan bakacak.
-        self.vtk.DegisiklikYapildi(degisiklikTuru=False)
-
     def threadFaceSozluk(self, Resimler, sozluk):
-
-        self.sozlukOku()
-        # if self.vtk.DegisiklikDurum() == True:
-        #     self.sozlukYaz(Resimler, sozluk)
-        # else:
-        #     self.sozlukOku()
+        self.yuzTanima.SozlukGetir()
+        self.adlar = self.yuzTanima.adlar
+        self.yuzler = self.yuzTanima.yuzler
 
     def goruntuGoster(self):
         ret, kare = self.kamera.read()

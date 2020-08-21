@@ -137,20 +137,20 @@ class VeriTabaniKisi(Veritabani):
             sorgu = ""
         return sorgu
 
-    @HataYakala
-    def DegisiklikDurum(self):
-        cursor = self.conn.cursor()
-        sorgu = "Select * from tbGuncelleme Limit 1"
-        cursor.execute(sorgu)
-        durum = cursor.fetchone()
-        durum = durum[0] == "True" #donen deger(False,) tuple şeklindeydi
-        return durum
-
-    @HataYakala
-    def DegisiklikYapildi(self, degisiklikTuru=False):
-        cursor = self.conn.cursor()
-        sorgu = "Update tbGuncelleme Set durum='{}'".format(degisiklikTuru)
-        cursor.execute(sorgu)
-        self.conn.commit()
-        cursor.close()
+    # @HataYakala
+    # def DegisiklikDurum(self):
+    #     cursor = self.conn.cursor()
+    #     sorgu = "Select * from tbGuncelleme Limit 1"
+    #     cursor.execute(sorgu)
+    #     durum = cursor.fetchone()
+    #     durum = durum[0] == "True" #donen deger(False,) tuple şeklindeydi
+    #     return durum
+    #
+    # @HataYakala
+    # def DegisiklikYapildi(self, degisiklikTuru=False):
+    #     cursor = self.conn.cursor()
+    #     sorgu = "Update tbGuncelleme Set durum='{}'".format(degisiklikTuru)
+    #     cursor.execute(sorgu)
+    #     self.conn.commit()
+    #     cursor.close()
 
