@@ -74,3 +74,7 @@ class PeopleAdd(QWidget):
             self.ui.btnDegistir.setText("Değiştir")
             self.timer.stop()
             self.kamera.release()
+
+    def closeEvent(self, event):
+        self.timer.stop()
+        self.kamera.release()
