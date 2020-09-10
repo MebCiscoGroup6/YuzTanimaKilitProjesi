@@ -44,7 +44,7 @@ class VeriTabaniKisi(Veritabani):
         self.conn.commit()
         cursor.close()
 
-        self.DegisiklikYapildi(degisiklikTuru=True)
+        # self.DegisiklikYapildi(degisiklikTuru=True)
         print("Kayıt başarı ile gerçekleştirildi.")
 
 
